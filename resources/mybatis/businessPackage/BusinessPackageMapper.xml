@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BusinessPackageMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TE_BUSINESSPACKAGE(
+			PACKAGENAME,	
+			PACKAGE_DESCRIBE,	
+			COUNT,	
+			TOTALPRICE,	
+			CREATETIME,	
+			USERID,	
+			FLAG,
+			PACKAGE_ID,
+			DAYS,
+			BUSINESS_ID,
+			BUSINESSPACKAGE_ID
+		) values (
+			#{PACKAGENAME},	
+			#{PACKAGE_DESCRIBE},	
+			#{COUNT},	
+			#{TOTALPRICE},	
+			#{CREATETIME},	
+			#{USERID},	
+			#{FLAG},
+			#{PACKAGE_ID},	
+			#{DAYS},	
+			#{BUSINESS_ID},
+			#{BUSINESSPACKAGE_ID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TE_BUSINESSPACKAGE
+		where 
+			BUSINESSPACKAGE_ID = #{BUSINESSPACKAGE_ID}
+	</delete>
+	
+	<!-- 删除业务-->
+	<delete id="deleteYW" parameterType="pd">
+		delete from TE_BUSINESSPACKAGE
+		where 
+			BUSINESS_ID = #{BUSINESS_ID}
+	</delete>
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TE_BUSINESSPACKAGE
+			set 
+				PACKAGENAME = #{PACKAGENAME},
+				PACKAGE_DESCRIBE = #{PACKAGE_DESCRIBE},
+				COUNT = #{COUNT},
+				TOTALPRICE = #{TOTALPRICE},
+				CREATETIME = #{CREATETIME},
+				USERID = #{USERID},
+				FLAG = #{FLAG},
+				PACKAGE_ID=#{PACKAGE_ID},
+				DAYS=#{DAYS},
+				BUSINESS_ID=#{BUSINESS_ID},
+			BUSINESSPACKAGE_ID = BUSINESSPACKAGE_ID
+			where 
+				BUSINESSPACKAGE_ID = #{BUSINESSPACKAGE_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			PACKAGENAME,	
+			PACKAGE_DESCRIBE,	
+			COUNT,	
+			TOTALPRICE,	
+			CREATETIME,	
+			USERID,	
+			FLAG,
+			PACKAGE_ID,
+			DAYS,	
+			BUSINESS_ID,
+			BUSINESSPACKAGE_ID
+		from 
+			TE_BUSINESSPACKAGE
+		where 
+			BUSINESSPACKAGE_ID = #{BUSINESSPACKAGE_ID}
+	</select>
+	<!-- 通过name获取数据 -->
+	<select id="findByName" parameterType="pd" resultType="pd">
+		select 
+			PACKAGENAME,	
+			PACKAGE_DESCRIBE,	
+			COUNT,	
+			TOTALPRICE,	
+			CREATETIME,	
+			USERID,	
+			FLAG,
+			PACKAGE_ID,
+			DAYS,	
+			BUSINESS_ID,
+			BUSINESSPACKAGE_ID
+		from 
+			TE_BUSINESSPACKAGE
+		where 1=1
+			<if test="BUSINESS_ID!=null and BUSINESS_ID!=''">
+				and BUSINESS_ID = #{BUSINESS_ID}
+			</if>
+			<if test="PACKAGENAME!=null and PACKAGENAME!=''">
+				and PACKAGENAME = #{PACKAGENAME}
+			</if>
+			
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.PACKAGENAME,	
+				a.PACKAGE_DESCRIBE,	
+				a.COUNT,	
+				a.TOTALPRICE,	
+				a.CREATETIME,	
+				a.USERID,	
+				a.FLAG,	
+				a.PACKAGE_ID,
+				a.DAYS,
+				a.BUSINESS_ID,
+				a.BUSINESSPACKAGE_ID
+		from 
+				TE_BUSINESSPACKAGE a
+				where 1=1
+				<if test="BUSINESS_ID !=null and BUSINESS_ID !=''">
+					and a.BUSINESS_ID = #{BUSINESS_ID} 
+				</if>
+				where 1=1
+				<if test="BUSINESSPACKAGE_ID !=null and BUSINESSPACKAGE_ID !=''">
+					and a.BUSINESSPACKAGE_ID = #{BUSINESSPACKAGE_ID} 
+				</if>
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.PACKAGENAME,	
+				a.PACKAGE_DESCRIBE,	
+				a.COUNT,	
+				a.TOTALPRICE,	
+				a.CREATETIME,	
+				a.USERID,	
+				a.FLAG,	
+				a.PACKAGE_ID,
+				a.DAYS,
+				a.BUSINESS_ID,
+				a.BUSINESSPACKAGE_ID
+		from 
+				TE_BUSINESSPACKAGE a
+				where 1=1
+				<if test="BUSINESS_ID !=null and BUSINESS_ID !=''">
+					and a.BUSINESS_ID = #{BUSINESS_ID} 
+				</if>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TE_BUSINESSPACKAGE
+		where 
+			BUSINESSPACKAGE_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

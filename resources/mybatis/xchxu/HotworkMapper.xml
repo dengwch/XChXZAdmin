@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="HotworkMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TB_HOTWORK(
+			WORK_ID,	
+			WORKNAME,	
+			CREATETIME,	
+			HOTIMGURL,	
+			HOTWORK_ID
+		) values (
+			#{WORK_ID},	
+			#{WORKNAME},	
+			#{CREATETIME},	
+			#{HOTIMGURL},	
+			#{HOTWORK_ID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TB_HOTWORK
+		where 
+			HOTWORK_ID = #{HOTWORK_ID}
+	</delete>
+	<!-- 删除-->
+	<delete id="delete1" parameterType="pd">
+		delete from TB_HOTWORK
+		where 
+			WORK_ID = #{WORK_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TB_HOTWORK
+			set 
+				WORK_ID = #{WORK_ID},
+				WORKNAME = #{WORKNAME},
+				CREATETIME = #{CREATETIME},
+				HOTIMGURL = #{HOTIMGURL},
+			HOTWORK_ID = HOTWORK_ID
+			where 
+				HOTWORK_ID = #{HOTWORK_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			WORK_ID,	
+			WORKNAME,	
+			CREATETIME,	
+			HOTIMGURL,	
+			HOTWORK_ID
+		from 
+			TB_HOTWORK
+		where 
+			HOTWORK_ID = #{HOTWORK_ID}
+	</select>
+	<!-- 通过ID获取数据 -->
+	<select id="findByWORK_ID" parameterType="pd" resultType="pd">
+		select 
+			WORK_ID,	
+			WORKNAME,	
+			CREATETIME,	
+			HOTIMGURL,	
+			HOTWORK_ID
+		from 
+			TB_HOTWORK
+		where 
+			WORK_ID = #{WORK_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.WORK_ID,	
+				a.WORKNAME,	
+				a.CREATETIME,	
+				a.HOTIMGURL,	
+				a.HOTWORK_ID
+		from 
+				TB_HOTWORK a order by a.CREATETIME
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.WORK_ID,	
+				a.WORKNAME,	
+				a.CREATETIME,	
+				a.HOTIMGURL,	
+				a.HOTWORK_ID
+		from 
+				TB_HOTWORK a order by a.CREATETIME
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TB_HOTWORK
+		where 
+			HOTWORK_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TransactionrecordMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TE_TRANSACTIONRECORD(
+			TYPE,	
+			FUNDDETAILS,	
+			AMOUNT,	
+			BALANCE,	
+			CREATETIME,	
+			AGENTMANGER_ID,	
+			FLAG,	
+			DAYS,	
+			BUSINESSPACKAGE_ID,	
+			BUSINESS_ID,	
+			PAYTYPE,
+			TRANSACTIONRECORD_ID
+		) values (
+			#{TYPE},	
+			#{FUNDDETAILS},	
+			#{AMOUNT},	
+			#{BALANCE},	
+			#{CREATETIME},	
+			#{AGENTMANGER_ID},	
+			#{FLAG},	
+			#{DAYS},	
+			#{BUSINESSPACKAGE_ID},	
+			#{BUSINESS_ID},	
+			#{PAYTYPE},
+			#{TRANSACTIONRECORD_ID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TE_TRANSACTIONRECORD
+		where 
+			TRANSACTIONRECORD_ID = #{TRANSACTIONRECORD_ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TE_TRANSACTIONRECORD
+			set 
+				TYPE = #{TYPE},
+				FUNDDETAILS = #{FUNDDETAILS},
+				AMOUNT = #{AMOUNT},
+				BALANCE = #{BALANCE},
+				CREATETIME = #{CREATETIME},
+				AGENTMANGER_ID = #{AGENTMANGER_ID},
+				FLAG = #{FLAG},
+				DAYS = #{DAYS},
+				BUSINESSPACKAGE_ID = #{BUSINESSPACKAGE_ID},
+				BUSINESS_ID = #{BUSINESS_ID},
+				PAYTYPE=#{PAYTYPE},
+			TRANSACTIONRECORD_ID = TRANSACTIONRECORD_ID
+			where 
+				TRANSACTIONRECORD_ID = #{TRANSACTIONRECORD_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			TYPE,	
+			FUNDDETAILS,	
+			AMOUNT,	
+			BALANCE,	
+			CREATETIME,	
+			AGENTMANGER_ID,	
+			FLAG,	
+			DAYS,	
+			BUSINESSPACKAGE_ID,	
+			BUSINESS_ID,
+			PAYTYPE,		
+			TRANSACTIONRECORD_ID
+		from 
+			TE_TRANSACTIONRECORD
+		where 
+			TRANSACTIONRECORD_ID = #{TRANSACTIONRECORD_ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.TYPE,	
+				a.FUNDDETAILS,	
+				a.AMOUNT,	
+				a.BALANCE,	
+				a.CREATETIME,	
+				a.AGENTMANGER_ID,	
+				a.FLAG,	
+				a.DAYS,	
+				a.BUSINESSPACKAGE_ID,	
+				a.BUSINESS_ID,
+				a.PAYTYPE,	
+				a.TRANSACTIONRECORD_ID
+		from 
+				TE_TRANSACTIONRECORD a left join te_business b on a.BUSINESS_ID=b.BUSINESS_ID 
+				where 1=1
+				
+				
+				<if test="pd.TYPE!=null and pd.TYPE!=''">
+					and a.TYPE = #{pd.TYPE} 
+				</if>
+				
+				<if test="pd.PAYTYPE!=null and pd.PAYTYPE!=''">
+					and a.PAYTYPE = #{pd.PAYTYPE} 
+				</if>
+				
+				
+				<if test="pd.BUSINESS_ID!=null and pd.BUSINESS_ID!=''">
+					and a.BUSINESS_ID = #{pd.BUSINESS_ID} 
+				</if>
+				<if test="pd.AGENTMANGER_ID!=null and pd.AGENTMANGER_ID!=''">
+					and a.AGENTMANGER_ID= #{pd.AGENTMANGER_ID} 
+				</if>
+				<if test="pd.BUSINESS_NAME!=null and pd.BUSINESS_NAME!=''">
+					and b.BUSINESS_NAME like '%${pd.BUSINESS_NAME}%'
+				</if>
+				<if test="pd.PX!=null and pd.PX!=''">
+				<if test="pd.PX==1">
+					order by a.AMOUNT desc
+				</if>
+				<if test="pd.PX==2">
+					order by a.CREATETIME desc
+				</if>
+				</if>
+				
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.TYPE,	
+				a.FUNDDETAILS,	
+				a.AMOUNT,	
+				a.BALANCE,	
+				a.CREATETIME,	
+				a.AGENTMANGER_ID,	
+				a.FLAG,	
+				a.DAYS,	
+				a.BUSINESSPACKAGE_ID,	
+				a.BUSINESS_ID,	
+				a.PAYTYPE,	
+				a.TRANSACTIONRECORD_ID
+		from 
+				TE_TRANSACTIONRECORD a
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TE_TRANSACTIONRECORD
+		where 
+			TRANSACTIONRECORD_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

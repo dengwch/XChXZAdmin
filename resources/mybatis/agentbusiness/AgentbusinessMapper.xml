@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AgentbusinessMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TE_AGENTBUSINESS(
+			BUSINESSNAME,	
+			BUSINESS_ID,	
+			BUSINESS_NUM,	
+			HAS_SALE,	
+			UNIT_PRICE,	
+			FLAG,	
+			AGENTMANGER_ID,	
+			AGENTBUSINESS_ID,
+			SALE
+		) values (
+			#{BUSINESSNAME},	
+			#{BUSINESS_ID},	
+			#{BUSINESS_NUM},	
+			#{HAS_SALE},	
+			#{UNIT_PRICE},	
+			#{FLAG},	
+			#{AGENTMANGER_ID},	
+			#{AGENTBUSINESS_ID},
+			#{SALE}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TE_AGENTBUSINESS
+		where 
+			AGENTBUSINESS_ID = #{AGENTBUSINESS_ID}
+	</delete>
+	
+	<!-- 删除-->
+	<delete id="deleteAgent" parameterType="pd">
+		delete from TE_AGENTBUSINESS
+		where 
+			AGENTMANGER_ID = #{AGENTMANGER_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TE_AGENTBUSINESS
+			set 
+				BUSINESSNAME = #{BUSINESSNAME},
+				BUSINESS_ID = #{BUSINESS_ID},
+				BUSINESS_NUM = #{BUSINESS_NUM},
+				HAS_SALE = #{HAS_SALE},
+				UNIT_PRICE = #{UNIT_PRICE},
+				FLAG = #{FLAG},
+				AGENTMANGER_ID = #{AGENTMANGER_ID},
+				SALE=#{SALE},
+			AGENTBUSINESS_ID = AGENTBUSINESS_ID
+			where 
+				AGENTBUSINESS_ID = #{AGENTBUSINESS_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			BUSINESSNAME,	
+			BUSINESS_ID,	
+			BUSINESS_NUM,	
+			HAS_SALE,	
+			UNIT_PRICE,	
+			FLAG,	
+			AGENTMANGER_ID,	
+			AGENTBUSINESS_ID,
+			SALE
+		from 
+			TE_AGENTBUSINESS
+		where 1=1
+		<if test="AGENTBUSINESS_ID!=null and AGENTBUSINESS_ID!=''">
+			and AGENTBUSINESS_ID = #{AGENTBUSINESS_ID}
+		</if>
+		<if test="BUSINESS_ID!=null and BUSINESS_ID!=''">
+			and BUSINESS_ID = #{BUSINESS_ID}
+		</if>
+		<if test="AGENTMANGER_ID!=null and AGENTMANGER_ID!=''">
+			and AGENTMANGER_ID = #{AGENTMANGER_ID}
+		</if>
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.BUSINESSNAME,	
+				a.BUSINESS_ID,	
+				a.BUSINESS_NUM,	
+				a.HAS_SALE,	
+				a.UNIT_PRICE,	
+				a.FLAG,	
+				a.AGENTMANGER_ID,	
+				a.AGENTBUSINESS_ID,
+				a.SALE
+		from 
+				TE_AGENTBUSINESS a
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.BUSINESSNAME,	
+				a.BUSINESS_ID,	
+				a.BUSINESS_NUM,	
+				a.HAS_SALE,	
+				a.UNIT_PRICE,	
+				a.FLAG,	
+				a.AGENTMANGER_ID,	
+				a.AGENTBUSINESS_ID,
+				a.SALE
+		from 
+				TE_AGENTBUSINESS a
+				where 1=1
+		<if test="AGENTMANGER_ID!=null and AGENTMANGER_ID!=''">
+			and a.AGENTMANGER_ID = #{AGENTMANGER_ID} 
+		</if>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TE_AGENTBUSINESS
+		where 
+			AGENTBUSINESS_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

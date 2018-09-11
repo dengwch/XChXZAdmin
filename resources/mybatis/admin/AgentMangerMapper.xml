@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="AgentMangerMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into te_agentuser(
+			USERNAME,	
+			PWD,	
+			AGENTNAME,	
+			AGENTPROVINCE,	
+			AGENTAREA,	
+			CONTACTS,	
+			PHONE,	
+			AGENTLEADNAME,	
+			AGENTLEADPHONE,	
+			CARDNO,	
+			CARDZHENGIMG,	
+			CARDFANIMG,	
+			AGENTCOMPANY,	
+			COMPANYNO,	
+			BUSINESSLICENCE,	
+			CREATETIME,	
+			AGENTMANGER_ID,
+			FLAG,
+			USERID
+		) values (
+			#{USERNAME},	
+			#{PWD},	
+			#{AGENTNAME},	
+			#{AGENTPROVINCE},	
+			#{AGENTAREA},	
+			#{CONTACTS},	
+			#{PHONE},	
+			#{AGENTLEADNAME},	
+			#{AGENTLEADPHONE},	
+			#{CARDNO},	
+			#{CARDZHENGIMG},	
+			#{CARDFANIMG},	
+			#{AGENTCOMPANY},	
+			#{COMPANYNO},	
+			#{BUSINESSLICENCE},	
+			#{CREATETIME},	
+			#{AGENTMANGER_ID},
+			#{FLAG},
+			#{USERID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from te_agentuser
+		where 
+			AGENTMANGER_ID = #{AGENTMANGER_ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  te_agentuser
+			set 
+				USERNAME = #{USERNAME},
+				PWD = #{PWD},
+				AGENTNAME = #{AGENTNAME},
+				AGENTPROVINCE = #{AGENTPROVINCE},
+				AGENTAREA = #{AGENTAREA},
+				CONTACTS = #{CONTACTS},
+				PHONE = #{PHONE},
+				AGENTLEADNAME = #{AGENTLEADNAME},
+				AGENTLEADPHONE = #{AGENTLEADPHONE},
+				CARDNO = #{CARDNO},
+				CARDZHENGIMG = #{CARDZHENGIMG},
+				CARDFANIMG = #{CARDFANIMG},
+				AGENTCOMPANY = #{AGENTCOMPANY},
+				COMPANYNO = #{COMPANYNO},
+				BUSINESSLICENCE = #{BUSINESSLICENCE},
+				CREATETIME = #{CREATETIME},
+				FLAG=#{FLAG},
+				USERID=#{USERID},
+			AGENTMANGER_ID = AGENTMANGER_ID
+			where 
+				AGENTMANGER_ID = #{AGENTMANGER_ID}
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			USERNAME,	
+			PWD,	
+			AGENTNAME,	
+			AGENTPROVINCE,	
+			AGENTAREA,	
+			CONTACTS,	
+			PHONE,	
+			AGENTLEADNAME,	
+			AGENTLEADPHONE,	
+			CARDNO,	
+			CARDZHENGIMG,	
+			CARDFANIMG,	
+			AGENTCOMPANY,	
+			COMPANYNO,	
+			BUSINESSLICENCE,	
+			CREATETIME,	
+			AGENTMANGER_ID,
+			FLAG,
+			USERID
+		from 
+			te_agentuser
+		where 
+			AGENTMANGER_ID = #{AGENTMANGER_ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				a.USERNAME,	
+				a.PWD,	
+				a.AGENTNAME,	
+				a.AGENTPROVINCE,	
+				a.AGENTAREA,	
+				a.CONTACTS,	
+				a.PHONE,	
+				a.AGENTLEADNAME,	
+				a.AGENTLEADPHONE,	
+				a.CARDNO,	
+				a.CARDZHENGIMG,	
+				a.CARDFANIMG,	
+				a.AGENTCOMPANY,	
+				a.COMPANYNO,	
+				a.BUSINESSLICENCE,	
+				a.CREATETIME,	
+				a.AGENTMANGER_ID,
+				a.FLAG,
+				a.USERID
+		from     
+				te_agentuser a
+				where 1=1
+		<if test="pd.lastLoginStart!=null and pd.lastLoginStart!=''">
+			and a.CREATETIME &gt;= #{pd.lastLoginStart} 
+		</if>
+		<if test="pd.PHONE!=null and pd.PHONE!=''">
+			and a.PHONE = #{pd.PHONE} 
+		</if>
+		<if test="pd.AGENTAREA!=null and pd.AGENTAREA!=''">
+			and a.AGENTAREA= #{pd.AGENTAREA} 
+		</if>
+		<if test="pd.lastLoginEnd!=null and pd.lastLoginEnd!=''">
+			and a.CREATETIME &lt;= #{pd.lastLoginEnd} 
+		</if>
+		order by a.CREATETIME desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.USERNAME,	
+				a.PWD,	
+				a.AGENTNAME,	
+				a.AGENTPROVINCE,	
+				a.AGENTAREA,	
+				a.CONTACTS,	
+				a.PHONE,	
+				a.AGENTLEADNAME,	
+				a.AGENTLEADPHONE,	
+				a.CARDNO,	
+				a.CARDZHENGIMG,	
+				a.CARDFANIMG,	
+				a.AGENTCOMPANY,	
+				a.COMPANYNO,	
+				a.BUSINESSLICENCE,	
+				a.CREATETIME,	
+				a.AGENTMANGER_ID,
+				a.FLAG,
+				a.USERID
+		from 
+				te_agentuser a
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from te_agentuser
+		where 
+			AGENTMANGER_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

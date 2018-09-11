@@ -1,0 +1,674 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
+<%
+String OSSUrl1 = application.getInitParameter("OSSUrl1");
+	String  IMGURL=(String) request.getSession().getAttribute("IMGURL");
+	String path = request.getContextPath();
+	String OSSUrl = application.getInitParameter("OSSUrl");
+	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<base href="<%=basePath%>">
+		<meta charset="utf-8" />
+		<title></title>
+		<meta name="description" content="overview & stats" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link href="static/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="static/css/bootstrap-responsive.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="static/css/font-awesome.min.css" />
+		<!-- 下拉框 -->
+		<link rel="stylesheet" href="static/css/chosen.css" />
+		
+		<link rel="stylesheet" href="static/css/ace.min.css" />
+		<link rel="stylesheet" href="static/css/ace-responsive.min.css" />
+		<link rel="stylesheet" href="static/css/ace-skins.min.css" />
+		
+		<link rel="stylesheet" href="static/css/datepicker.css" /><!-- 日期框 -->
+		<script type="text/javascript" src="static/js/jquery-1.7.2.js"></script>
+		<script type="text/javascript" src="static/js/jquery.tips.js"></script>
+		<style>
+			 *{
+            margin:0;
+            padding:0;
+            box-sizing: border-box;
+        }
+        
+        
+        
+		 a{
+            color:#000;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        input,button,textarea{
+            border:none;
+            outline: none;
+        }
+        ul{
+            list-style: none;
+        }
+
+        body{
+            font: 12px/1.5  Arial,'Hiragino Sans GB','Microsoft YaHei', YaHei, Helvetica, sans-serif;
+        }
+        .msgTable{
+            width:80%;
+            border-collapse: collapse;
+            border-right:1px solid #ccc;
+            border-bottom:1px solid #ccc; 
+            margin: 30px;
+        }
+        .msgTable td,.msgTable th{
+            text-align: center;
+            vertical-align: middle;
+            font-size: 16px;
+           /*  height:60px; */
+            border:none;
+            color: rgba(0,0,0,0.7);
+        }
+        .redB
+        {
+        color:red;
+        }
+        .msgTable tr:nth-child(even)
+        {
+            background: #eee;
+
+        }
+        .msgTable td ,.msgTable th
+        {
+           border-left:1px solid #ccc;
+            border-top:1px solid #ccc;
+        }
+        .msgTable td input[type = number]
+        {
+            width: 60%;
+            margin: 0 10%;
+            border:1px solid #ccc;
+            padding-left:20px;
+            border-radius: 6px;
+        }
+        .msgTable thead
+        {
+            border:1px solid #ccc;
+            background: #eee;
+        }
+        .msgTable th a,.msgTable td a
+        {
+            color: #006DCC;
+            display: inline-block;
+            padding:0 10px;
+            /*background:#006DCC;*/
+        }     
+          
+        .addPic_Kee{
+        display:inline-block;
+        background:#268CBB;
+        height:30px;
+        line-height:30px;
+        color:#fff;
+        padding:0 10px;
+        }
+        
+        .edit
+        {
+            margin: 0 10px;
+        }
+        .wholeBox a
+        {
+            color: #2489c5;
+            cursor: pointer;
+        }
+        .wholeBox p
+        {
+            /* height: 30px; */
+            margin:10px 0 0 0;
+        }
+        label {font-size:12px;cursor:pointer;}
+        label i {font-size:12px;font-style:normal;display:inline-block;width:15px;height:15px;text-align:center;line-height:12px;color:#fff;vertical-align:middle;margin:-2px 2px 1px 0px;border:#2489c5 1px solid;}
+        input[type="checkbox"],input[type="radio"] {display:none;}
+        input[type="radio"] + i {border-radius:7px;}
+        input[type="checkbox"]:checked + i,input[type="radio"]:checked + i {background:#2489c5;}
+		</style>
+		<script src="ckeditor/ckeditor.js"></script>
+<script type="text/javascript">
+var editor;
+
+//The instanceReady event is fired, when an instance of CKEditor has finished
+//its initialization.
+CKEDITOR.on( 'instanceReady', function( ev ) {
+	editor = ev.editor;
+	// Show this "on" button.
+//		document.getElementById( 'readOnlyOn' ).style.display = '';
+
+	// Event fired when the readOnly property changes.
+	editor.on( 'readOnly', function() {
+//			document.getElementById( 'readOnlyOn' ).style.display = this.readOnly ? 'none' : '';
+//			document.getElementById( 'readOnlyOff' ).style.display = this.readOnly ? '' : 'none';
+	});
+});
+
+function toggleReadOnly( isReadOnly ) {
+	// Change the read-only state of the editor.
+	// http://docs.ckeditor.com/#!/api/CKEDITOR.editor-method-setReadOnly
+//		editor.setReadOnly( isReadOnly );
+}	
+	
+	//保存
+	function save(){
+			if($("#CLASSIFICATION_ID").val()==""){
+			$("#CLASSIFICATION_ID").tips({
+				side:3,
+	            msg:'请输入分类ID',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#CLASSIFICATION_ID").focus();
+			return false;
+		}
+		if($("#NAME").val()==""){
+			$("#NAME").tips({
+				side:3,
+	            msg:'请输入商品名称',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#NAME").focus();
+			return false;
+		}
+		/* if($("#NUMBER").val()==""){
+			$("#NUMBER").tips({
+				side:3,
+	            msg:'请输入商品货号',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#NUMBER").focus();
+			return false;
+		} */
+		if($("#PRICE").val()=="" || $("#PRICE").val()=="0" || $("#PRICE").val()==null){
+			$("#PRICE").tips({
+				side:3,
+	            msg:'请输入售价',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#PRICE").focus();
+			return false;
+		}else{
+			
+			
+		    var re = /^[0-9]+\.?[0-9]*$/;
+		    if (!re.test($("#PRICE").val())) 
+		    {
+		    	$("#PRICE").tips({
+					side:3,
+		            msg:'请输入正确售价(正数或者小数)',
+		            bg:'#AE81FF',
+		            time:2
+		        });
+				$("#PRICE").focus();
+				return false;
+		    } 
+		}
+		/*
+		if($("#STOCK").val()==""){
+			$("#STOCK").tips({
+				side:3,
+	            msg:'请输入库存',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#STOCK").focus();
+			return false;
+		}else{
+			var re = /^[1-9]*[1-9][0-9]*$/;
+		    if (!re.test($("#STOCK").val())){
+		    	$("#STOCK").tips({
+					side:3,
+		            msg:'请输入正确库存(整数)',
+		            bg:'#AE81FF',
+		            time:2
+		        });
+				$("#STOCK").focus();
+				return false;
+		    }
+			
+		}
+		*/
+		/*if($("#WEIGHT").val()==""){
+			$("#WEIGHT").tips({
+				side:3,
+	            msg:'请输入重量',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#WEIGHT").focus();
+			return false;
+		}else{
+			 var re = /^[0-9]+\.?[0-9]*$/;
+			    if (!re.test($("#WEIGHT").val())) 
+			    {
+			    	$("#WEIGHT").tips({
+						side:3,
+			            msg:'请输入正确重量(正数或者小数)',
+			            bg:'#AE81FF',
+			            time:2
+			        });
+					$("#WEIGHT").focus();
+					return false;
+			    }
+		}
+			
+		if($("#VOLUME").val()==""){
+			$("#VOLUME").tips({
+				side:3,
+	            msg:'请输入体积',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#VOLUME").focus();
+			return false;
+		}else{
+			 var re = /^[0-9]+\.?[0-9]*$/;
+			    if (!re.test($("#VOLUME").val())) 
+			    {
+			    	$("#VOLUME").tips({
+						side:3,
+			            msg:'请输入正确体积(正数或者小数)',
+			            bg:'#AE81FF',
+			            time:2
+			        });
+					$("#VOLUME").focus();
+					return false;
+			    }
+		}*/
+		if($("#ZK").val()==""){
+			$("#ZK").tips({
+				side:3,
+	            msg:'请输入折扣',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#ZK").focus();
+			return false;
+		}else{
+			 var re = /^[0-9]+\.?[0-9]*$/;
+			    if (!re.test($("#ZK").val())) 
+			    {
+			    	$("#ZK").tips({
+						side:3,
+			            msg:'请输入正确折扣(正数或者小数)',
+			            bg:'#AE81FF',
+			            time:2
+			        });
+					$("#ZK").focus();
+					return false;
+			    }
+		}
+		if($("#IMG").val()==""){
+			$("#IMG").tips({
+				side:3,
+	            msg:'请输入商品图片',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#IMG").focus();
+			return false;
+		}
+		/*if($("#LOCATION").val()==""){
+			$("#LOCATION").tips({
+				side:3,
+	            msg:'请输入所在地',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#LOCATION").focus();
+			return false;
+		}
+		if($("#FREIGHTTEMPLATE").val()==""){
+			$("#FREIGHTTEMPLATE").tips({
+				side:3,
+	            msg:'请输入运费模板',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#FREIGHTTEMPLATE").focus();
+			return false;
+		}
+		if($("#PERCENTAGECOMMISSION").val()==""){
+			$("#PERCENTAGECOMMISSION").tips({
+				side:3,
+	            msg:'请输入分佣比例',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#PERCENTAGECOMMISSION").focus();
+			return false;
+		}
+		
+		if($("#PERCENTAGECOMMISSIONFIR").val()==""){
+			$("#PERCENTAGECOMMISSIONFIR").tips({
+				side:3,
+	            msg:'请输入一级分佣比例',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#PERCENTAGECOMMISSIONFIR").focus();
+			return false;
+		}else{
+			 var re = /^[0-9]+\.?[0-9]*$/;
+			    if (!re.test($("#PERCENTAGECOMMISSIONFIR").val())) 
+			    {
+			    	$("#PERCENTAGECOMMISSIONFIR").tips({
+						side:3,
+			            msg:'请输入正确一级分佣比例(正数或者小数)',
+			            bg:'#AE81FF',
+			            time:2
+			        });
+					$("#PERCENTAGECOMMISSIONFIR").focus();
+					return false;
+			    }
+		}
+		
+		
+		if($("#PERCENTAGECOMMISSIONSEC").val()==""){
+			$("#PERCENTAGECOMMISSIONSEC").tips({
+				side:3,
+	            msg:'请输入二级分佣比例',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#PERCENTAGECOMMISSIONSEC").focus();
+			return false;
+		}else{
+			 var re = /^[0-9]+\.?[0-9]*$/;
+			    if (!re.test($("#PERCENTAGECOMMISSIONSEC").val())) 
+			    {
+			    	$("#PERCENTAGECOMMISSIONSEC").tips({
+						side:3,
+			            msg:'请输入正确二级分佣比例(正数或者小数)',
+			            bg:'#AE81FF',
+			            time:2
+			        });
+					$("#PERCENTAGECOMMISSIONSEC").focus();
+					return false;
+			    }
+		}
+		
+		
+		
+		
+		if($("#TYPE").val()==""){
+			$("#TYPE").tips({
+				side:3,
+	            msg:'请输入上架模式',
+	            bg:'#AE81FF',
+	            time:2
+	        });
+			$("#TYPE").focus();
+			return false;
+		}*/
+		var num=$("#num").val();
+		for(var i=0;i<num;i++){
+			if($("#kucun"+i).val()==""){
+				$("#kucun"+i).tips({
+					side:3,
+		            msg:'请输入库存',
+		            bg:'#AE81FF',
+		            time:2
+		        });
+				$("#kucun"+i).focus();
+				return false;
+			}
+			if($("#jg"+i).val()==""){
+				$("#jg"+i).tips({
+					side:3,
+		            msg:'请输入价格',
+		            bg:'#AE81FF',
+		            time:2
+		        });
+				$("#jg"+i).focus();
+				return false;
+			}
+		}
+		$("#Form").submit();
+		$("#zhongxin").hide();
+		$("#zhongxin2").show();
+	}
+	
+</script>
+	</head>
+<body>
+	<form action="commodity/${msg }.do" name="Form" id="Form" method="post">
+		<input type="hidden" name="COMMODITY_ID" id="COMMODITY_ID" value="${pd.COMMODITY_ID}"/>
+		<input type="hidden" name="CLASSIFICATION_ID1" id="CLASSIFICATION_ID1" value="${pd.CLASSIFICATION_ID }"/>
+		<input type="hidden" name="num" id="num" value="0"/>
+		<input type="hidden" name="BUSINESSUSER_ID" id="BUSINESSUSER_ID" value="${BUSINESSUSER_ID }"/>
+		
+		<input type="hidden" name="imgID" id="imgID" value="<%=IMGURL %>"/>
+		<div id="zhongxin">
+		<table id="table_report" class="table table-striped table-bordered table-hover">
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">所属分类:</td>
+				<td>
+<!-- 				<input type="text" name="CLASSIFICATION_ID" id="CLASSIFICATION_ID" value="${pd.CLASSIFICATION_ID}" maxlength="32" placeholder="这里输入分类ID" title="分类ID"/> -->
+					
+					 
+       					<span >${pd.CLASSIFICATION_NAME }</span> 
+				
+				
+				</td>
+			</tr>
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">商品名称:<b class="redB">*</b></td>
+				<td><span >${pd.NAME}</span> 
+			</tr>
+			
+			
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">商品规格:</td>
+				<td>
+				 <div class="wholeBox" id="guige">
+
+   			 	</div>
+				<table  class="msgTable" id="biaoge" cellspacing="1">
+				</table>
+				</td>
+			</tr>
+			
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">价格:<b class="redB">*</b></td>
+				<td><span >${pd.PRICE}</span></td>
+			</tr>
+			
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">折扣:<b class="redB">*</b></td>
+				<td><span >${pd.ZK }</span></td>
+			</tr>
+			
+			<tr>
+				<td style="width:100px;text-align: right;padding-top: 13px;">商品图片:</td>
+				<td id="imgh">
+				 <c:forEach items="${varOList}" var="OList">
+				 		<c:if test="${fn:substring(OList.IMGURL, 0, 3)=='gzh'}">
+				        	<img style="width: 200px;height: 200px; margin-bottom: 10px;" src="<%=OSSUrl1 %>${OList.IMGURL }" />
+				        </c:if>
+				        <c:if test="${fn:substring(OList.IMGURL, 0, 3)!='gzh'}">
+				        	<img style="width: 200px;height: 200px; margin-bottom: 10px;" src="<%=OSSUrl %>${OList.IMGURL }" />
+				        </c:if>
+					 
+      			</c:forEach>
+				</td>
+			</tr>
+			
+			<tr>
+				<td style="width:70px;text-align: right;padding-top: 13px;">商品简介:</td>
+				<td>
+						<textarea id="WORDREMARK" disabled="disabled" name="WORDREMARK">${pd.WORDREMARK}</textarea>
+				</td>
+			</tr>
+			<tr>
+				<td style="width:70px;text-align: right;padding-top: 13px;">商品详情:</td>
+				<td>
+				
+	        	<c:forEach items="${deIMGList}" var="OList">
+	        			<c:if test="${fn:substring(OList.IMGURL, 0, 3)=='gzh'}">
+				        	<img style="width: 200px;height: 200px;  margin-bottom: 10px;" src="<%=OSSUrl1 %>${OList.IMGURL }" />
+				        </c:if>
+				        <c:if test="${fn:substring(OList.IMGURL, 0, 3)!='gzh'}">
+				        	<img style="width: 200px;height: 200px;  margin-bottom: 10px;" src="<%=OSSUrl %>${OList.IMGURL }" />
+				        </c:if>
+					 
+      			</c:forEach>
+				
+				</td>
+			</tr>
+			<tr>
+				<td style="text-align: center;" colspan="10">
+					<a class="btn btn-mini btn-danger" onclick="top.Dialog.close();">返回</a>
+				</td>
+			</tr>
+		</table>
+		</div>
+		
+		<div id="zhongxin2" class="center" style="display:none"><br/><br/><br/><br/><br/><img src="static/images/jiazai.gif" /><br/><h4 class="lighter block green">提交中...</h4></div>
+		<input value="<%=OSSUrl %>" id="ossurl" style="display:none">
+		<div id="qrt1" style="display:none"><input type="hidden" id="en1" value="0"/></div>
+	</form>
+	
+	
+		<!-- 引入 -->
+		<script type="text/javascript">window.jQuery || document.write("<script src='static/js/jquery-1.9.1.min.js'>\x3C/script>");</script>
+		<script src="static/js/bootstrap.min.js"></script>
+		<script src="static/js/ace-elements.min.js"></script>
+		<script src="static/js/ace.min.js"></script>
+		<script type="text/javascript" src="static/js/chosen.jquery.min.js"></script><!-- 下拉框 -->
+		<script type="text/javascript" src="static/js/bootstrap-datepicker.min.js"></script><!-- 日期框 -->
+		<script type="text/javascript" src="static/js/ajaxfileupload.js"></script>
+		<script type="text/javascript">
+		
+		
+		
+	
+		$(top.hangge());
+		$(function() {
+			
+			//单选框
+			$(".chzn-select").chosen(); 
+			$(".chzn-select-deselect").chosen({allow_single_deselect:true}); 
+			
+			//日期框
+			$('.date-picker').datepicker();
+			findGuige();
+		});
+		
+		
+		
+		
+		
+		function findGuige(){
+			var id='${pd.COMMODITY_ID}';
+			var BUSINESSUSER_ID='${BUSINESSUSER_ID}';
+			$.ajax({
+				type : "get",
+				dataType:"json",
+				url : '${pageContext.request.contextPath}/commodity/findGuige.do?id='+id+"&BUSINESSUSER_ID="+BUSINESSUSER_ID,
+				success : function(data){
+					var flag=data.flag;
+					if(flag==1){
+						var listSpe = data.listSpe;
+						var mapList=data.mapList;
+						$("#guige").empty();
+						$("#biaoge").html("");
+						for (var i = 0; i<listSpe.length;i++){
+							var str='';
+							str+="<p><span>"+listSpe[i].NAME+"</span></p>";
+		       				 str+="<p>";
+	// 						alert(mapList);
+// 							alert(mapList[listSpe[i].SPECIFICATIONS_ID]);
+		       				 for(var j=0;j<mapList[listSpe[i].SPECIFICATIONS_ID].length;j++){
+		       					str+=" <label style='display:inline-block;'>"+mapList[listSpe[i].SPECIFICATIONS_ID][j].NAME+"</label>"; 
+		       				 }
+		       				 str+="</p>";
+// 		       				 alert(str);
+							$("#guige").append(str);
+							
+						}
+						
+						//alert();
+					}
+				}
+				
+			});
+		
+		}
+	function findBiaoGe(){
+		var BUSINESSUSER_ID='${BUSINESSUSER_ID}';
+		var id='${pd.COMMODITY_ID}';
+		var pausedCause = '';
+		$(":checkbox[name='gg'][checked]").each(function(){
+			pausedCause += this.value +',';
+		});
+		if(pausedCause.length>0){
+			pausedCause = pausedCause.substring(0,pausedCause.length-1);
+			 $.ajax({
+					type : "get",
+					dataType:"json",
+					url : '${pageContext.request.contextPath}/commodity/findBiaoGe.do?pausedCause='+pausedCause+'&id='+id+"&BUSINESSUSER_ID="+BUSINESSUSER_ID,
+					success : function(data){
+						$("#biaoge").html("");
+							var flag=data.flag;
+							$("#num").val(data.num);
+							var listSpe =data.listSpe;
+							var list=data.list;
+// 							alert(listSpe);
+							var str='';
+							$("#biaoge").html("");
+							if(listSpe.length>0){
+								str+="<thead><tr>";
+								for (var i = 0; i<listSpe.length;i++){
+// 									var str='';
+									if(listSpe[i].count>0){
+										str+="<th>"+listSpe[i].NAME+"</th>";
+// 										$("#biaoge").append(str);
+									}
+								}
+								str+="<th>库存</th><th>销售价格</th>";
+								str+="</tr></thead><tbody>";
+								for(var j=0;j<list.length;j++){
+									str+="<tr>";
+// 									var str='';
+									var listg=list[j];
+									var pausedCause = '';
+								    for(var g=0;g<listg.length;g++){
+								    	pausedCause += listg[g].SPECIFICATIONPROPERTIES_ID +';';								    	
+										str+="<td>"+listg[g].NAME+"</td>";
+								    }
+								    if(pausedCause.length>0){
+										 pausedCause = pausedCause.substring(0,pausedCause.length-1);
+								    }
+								    str+="<input id='proper"+j+"' name='proper"+j+"' type='hidden' value='"+pausedCause+"'  >";
+								    str+="<td><input id='kucun"+j+"' name='kucun"+j+"' type='text' value='' min='1' max='999999' style='position:relative;top:5px;' ></td>";
+								    str+="<td><input id='jg"+j+"' name='jg"+j+"' type='text' value='' style='position:relative;top:5px;' ></td>";
+								    str+="</tr>";
+								}
+								str+="</tbody>";
+										$("#biaoge").html(str);
+							}
+						}
+				});
+		}
+	}
+		
+		
+		
+		
+		
+		</script>
+</body>
+</html>

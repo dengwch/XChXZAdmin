@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CommodityMapper">
+	
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into TB_COMMODITY(
+			NAME,	
+			NUMBER,	
+			PRICE,	
+			STOCK,
+			WEIGHT,	
+			VOLUME,	
+			LOCATION,	
+			FREIGHTTEMPLATE,	
+			PERCENTAGECOMMISSIONFIR,	
+			PERCENTAGECOMMISSIONSEC,
+			TYPE,	
+			CREATETIME,
+			DETAIL,
+			GUIGE,
+			BUSSINESSACTIVITY_ID,
+			BUSINESSUSER_ID,
+			COMMODITY_ID
+		) values (
+			#{NAME},	
+			#{NUMBER},	
+			#{PRICE},	
+			#{STOCK},	
+			#{WEIGHT},	
+			#{VOLUME},	
+			#{LOCATION},	
+			#{FREIGHTTEMPLATE},	
+			#{PERCENTAGECOMMISSIONFIR},	
+			#{PERCENTAGECOMMISSIONSEC},
+			#{TYPE},
+			#{CREATETIME},	
+			#{DETAIL},
+			#{GUIGE},
+			#{BUSSINESSACTIVITY_ID},
+			#{BUSINESSUSER_ID},
+			#{COMMODITY_ID}
+		)
+	</insert>
+	
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from TB_COMMODITY
+		where 
+			COMMODITY_ID = #{COMMODITY_ID}
+	</delete>
+	
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update  TB_COMMODITY
+			set 
+				NAME = #{NAME},
+				NUMBER = #{NUMBER},
+				PRICE = #{PRICE},
+				STOCK = #{STOCK},
+				WEIGHT = #{WEIGHT},
+				VOLUME = #{VOLUME},
+				LOCATION = #{LOCATION},
+				FREIGHTTEMPLATE = #{FREIGHTTEMPLATE},
+				PERCENTAGECOMMISSIONFIR = #{PERCENTAGECOMMISSIONFIR},
+				PERCENTAGECOMMISSIONSEC = #{PERCENTAGECOMMISSIONSEC},
+				TYPE = #{TYPE},
+				DETAIL=#{DETAIL},
+				GUIGE=#{GUIGE},
+				BUSSINESSACTIVITY_ID=#{BUSSINESSACTIVITY_ID},
+			COMMODITY_ID = COMMODITY_ID
+			where 
+				COMMODITY_ID = #{COMMODITY_ID}
+	</update>
+	<!-- 修改 -->
+	<update id="editFlag" parameterType="pd">
+		update  TB_COMMODITY
+			set 
+				FlAG = #{FlAG},
+				XJYY=#{XJYY},
+			COMMODITY_ID = COMMODITY_ID
+			where 
+				COMMODITY_ID = #{COMMODITY_ID}
+	</update>
+	<!-- 修改 -->
+	<update id="updateImg" parameterType="pd">
+		update  tb_commodityimg
+			set 
+				COMMODITY_ID=#{COMMODITY_ID}
+			where 
+				COMMODITY_ID = '0' 
+	</update>
+	
+		<!-- 修改 -->
+	<update id="updateSpe" parameterType="pd">
+		update  tb_specifications
+			set 
+				COMMODITY_ID=#{COMMODITY_ID}
+			where 
+				COMMODITY_ID = '0' 
+	</update>
+	
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+			a.NAME,	
+			a.NUMBER,	
+			a.PRICE,	
+			a.STOCK,	
+			a.WEIGHT,	
+			a.VOLUME,	
+			a.LOCATION,	
+			a.FREIGHTTEMPLATE,	
+			a.PERCENTAGECOMMISSIONFIR,	
+			a.PERCENTAGECOMMISSIONSEC,	
+			a.TYPE,	
+			a.GUIGE,
+			a.DETAIL,
+			a.COMMODITY_ID,
+			a.FLAG,
+			a.ZK,
+			b.CLASSIFICATION_ID,
+			b.CLASSIFICATIONRELATION_ID,
+			a.WORDREMARK,
+			a.BUSINESSUSER_ID,
+			(select b.NAME from tb_classification b, tb_classificationrelation c where a.COMMODITY_ID=c.COMMODITY_ID and c.CLASSIFICATION_ID=b.CLASSIFICATION_ID)as CLASSIFICATION_NAME,
+			a.BUSSINESSACTIVITY_ID
+			
+		from 
+			TB_COMMODITY a left join tb_classificationrelation b on a.COMMODITY_ID =b.COMMODITY_ID
+		where 
+			a.COMMODITY_ID = #{COMMODITY_ID}
+	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+				(select b.NAME from tb_classification b, tb_classificationrelation c where a.COMMODITY_ID=c.COMMODITY_ID and c.CLASSIFICATION_ID=b.CLASSIFICATION_ID)as CLASSIFICATION_ID,
+				a.NAME,	
+				a.NUMBER,	
+				a.PRICE,	
+				a.STOCK,	
+				a.WEIGHT,	
+				a.VOLUME,	
+				a.FLAG,
+				(select b.AREA_NAME from td_area b where a.LOCATION =b.AREA_ID)as LOCATION,	
+				(select b.NAME from tb_logistics b where b.LOGISTICS_ID=a.FREIGHTTEMPLATE)as FREIGHTTEMPLATE,	
+				a.PERCENTAGECOMMISSIONFIR,	
+				a.PERCENTAGECOMMISSIONSEC,
+				a.TYPE,	
+				a.COMMODITY_ID,
+				r.SHOPNAME,
+				r.BUSINESSUSER_ID,
+				b.ACTIVITYNAME 
+		from 
+				TB_COMMODITY a left join tb_bussinessactivity b on a.BUSSINESSACTIVITY_ID=b.BUSSINESSACTIVITY_ID 
+				left join tb_classificationrelation q on a.COMMODITY_ID=q.COMMODITY_ID
+				left join tb_businessuser r on a.BUSINESSUSER_ID=r.BUSINESSUSER_ID
+				where 1=1
+				<if test="pd.CLASSIFICATION_ID!=null and pd.CLASSIFICATION_ID!=''">
+				<!--  and q.CLASSIFICATION_ID in (#{pd.CLASSIFICATION_ID})-->
+				and q.CLASSIFICATION_ID =#{pd.CLASSIFICATION_ID}
+				</if>
+				<if test="pd.SHOPNAME!=null and pd.SHOPNAME!=''">
+				and r.SHOPNAME =#{pd.SHOPNAME}
+				</if>
+				<if test="pd.NAME!=null and pd.NAME!=''">
+				and a.NAME like CONCAT(CONCAT('%', #{pd.NAME}), '%')
+				</if>
+				
+				order by a.CREATETIME desc
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+				a.NAME,	
+				a.NUMBER,	
+				a.PRICE,	
+				a.STOCK,	
+				a.WEIGHT,	
+				a.VOLUME,	
+				a.LOCATION,	
+				a.FREIGHTTEMPLATE,	
+				a.PERCENTAGECOMMISSIONFIR,	
+				a.PERCENTAGECOMMISSIONSEC,
+				a.TYPE,	
+				a.COMMODITY_ID
+		from 
+				TB_COMMODITY a where a.BUSINESSUSER_ID=#{BUSINESSUSER_ID}
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from TB_COMMODITY
+		where 
+			COMMODITY_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+</mapper>

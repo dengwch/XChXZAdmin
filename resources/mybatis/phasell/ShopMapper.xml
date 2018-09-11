@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ShopMapper">
+	
+	<!-- 录入商场-->
+	<insert id="save" parameterType="com.fh.entity.Shop">
+		insert into TB_SHOP(
+			SHOP_ID,	
+			SHOPNAME,	
+			SHOPNUM,	
+			SHOPADDRESS,	
+			SHOPLOGO,	
+			SHOPBUS,
+			RZTIME,
+			CREATIME,
+			STATUS,
+			ACTIVITY
+		) values (
+			#{SHOP_ID},	
+			#{SHOPNAME},	
+			#{SHOPNUM},	
+			#{SHOPADDRESS},	
+			#{SHOPLOGO},	
+			#{SHOPBUS},	
+			#{RZTIME},
+			#{CREATIME},	
+			#{STATUS},	
+			#{ACTIVITY}
+		)
+	</insert>
+	
+	<!-- 删除商场 -->
+	<delete id="delete" parameterType="java.lang.String" >
+		delete from TB_SHOP where SHOP_ID = #{SHOP_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="com.fh.entity.Shop">
+		update TB_SHOP
+		set
+		<if test="SHOPNAME != null and SHOPNAME != ''">
+		SHOPNAME = #{SHOPNAME},
+		</if>
+		<if test="SHOPNUM != null and SHOPNUM != ''">
+		SHOPNUM = #{SHOPNUM},
+		</if>
+		<if test="SHOPADDRESS != null and SHOPADDRESS != ''">
+		SHOPADDRESS = #{SHOPADDRESS},
+		</if>
+		<if test="SHOPLOGO != null and SHOPLOGO != ''">		
+		SHOPLOGO = #{SHOPLOGO},
+		</if>
+		<if test="SHOPBUS != null and SHOPBUS != ''">		
+		SHOPBUS = #{SHOPBUS},
+		</if>
+		<if test="STATUS != null and STATUS != ''">		
+		STATUS = #{STATUS},
+		</if>
+		<if test="RZTIME != null and RZTIME != ''">		
+		RZTIME = #{RZTIME},
+		</if>
+		<if test="ACTIVITY != null and ACTIVITY != ''">		
+		ACTIVITY = #{ACTIVITY},
+		</if>
+		SHOP_ID = SHOP_ID
+		where
+		SHOP_ID = #{SHOP_ID}
+	</update>
+	
+	<select id="datalistPage" parameterType="page" resultType="com.fh.entity.Shop">
+		select * from TB_SHOP s order by s.CREATIME DESC
+	</select>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="java.lang.String" resultType="com.fh.entity.Shop">
+		select * from TB_SHOP where SHOP_ID = #{SHOP_ID}
+	</select>
+</mapper>
