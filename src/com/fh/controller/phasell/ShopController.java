@@ -41,7 +41,7 @@ import com.fh.util.PageData;
 
 /** 
  * 类名称：ShopController
- * 创建人：FH 
+ * 创建人：DWCH 
  * 创建时间：2018-09-03
  */
 @Controller
